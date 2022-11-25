@@ -1,1 +1,3 @@
 nwbinspector
+spikeinterface[full]
+neuroconv[spikeglx]
