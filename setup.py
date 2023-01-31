@@ -10,15 +10,15 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
-    name="my_lab_to_nwb",
-    version="0.0.1",
-    description="NWB conversion scripts, functions, and classes for an arbitrary conversion project.",
+    name="shuler_lab_to_nwb",
+    version="0.1.0",
+    description="NWB conversion scripts, functions, and classes for Shuler lab.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Cody Baker and Ben Dichter.",
+    author="Luiz Tauffer and Ben Dichter.",
     email="ben.dichter@catalystneuro.com",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=install_requires,
 )
