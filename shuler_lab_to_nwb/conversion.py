@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import json
+import datetime
 from dateutil import tz
 import pynwb
 from neuroconv.datainterfaces import SpikeGLXRecordingInterface
@@ -17,6 +19,7 @@ def run_conversion(
     spikeglx_file_path: str,
     trials_file_path: str,
     reference_timestamps_file_path: str,
+    subject_metadata_file_path: str,
     output_nwb_file: str
 ):
 
@@ -29,9 +32,13 @@ def run_conversion(
     metadata["NWBFile"].update(session_start_time=session_start_time)
 
     # TODO - add Subject metadata
+    with open(subject_metadata_file_path, "r") as f:
+        subject_metadata = json.load(f)
+    subject_metadata["date_of_birth"] = datetime.datetime.strptime(subject_metadata["date_of_birth"], "%m-%d-%Y").replace(tzinfo=tz.gettz("US/Pacific"))
+    metadata["Subject"] = subject_metadata
 
     # Run the ecephys conversion
-    interface.run_conversion(nwbfile_path=output_nwb_file, metadata=metadata, stub_test=True)
+    interface.run_conversion(nwbfile_path=output_nwb_file, metadata=metadata)
 
     # Read trials data
     df_0 = pd.read_csv(trials_file_path)
