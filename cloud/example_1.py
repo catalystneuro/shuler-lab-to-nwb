@@ -18,7 +18,7 @@ job_kwargs = {
     "TARGET_AWS_S3_BUCKET": "my-bucket-target",
     "TARGET_AWS_S3_BUCKET_FOLDER": "my-folder",
     "DATA_TYPE": "spikeglx",
-    "READ_RECORDING_KWARGS": {"stream_id": "imec.ap"},
+    # "READ_RECORDING_KWARGS": {"stream_id": "imec.ap"},
     "SORTERS": "kilosort2_5,kilosort3"
 }
 
@@ -27,7 +27,8 @@ response_job = batch.submit_job(
     job_name="my-job-123", 
     job_queue=my_job_queues[0]["jobQueueName"],
     job_definition=my_job_definitions[0]["jobDefinitionName"],
-    job_kwargs=job_kwargs, 
+    job_kwargs=job_kwargs,
+    attempt_duration_seconds=7200,
 )
 
 # Check job status every 60 seconds, until succeeded
