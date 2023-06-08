@@ -43,7 +43,7 @@ class ShulerBehaviorInterface(BaseTemporalAlignmentInterface):
     def get_timestamps(self) -> np.ndarray:
         return self.df["session_time"].values
 
-    def align_timestamps(self, aligned_timestamps: np.ndarray):
+    def set_aligned_timestamps(self, aligned_timestamps: np.ndarray):
         self.df["session_time_sync"] = aligned_timestamps
 
     def run_conversion(
@@ -69,6 +69,8 @@ class ShulerBehaviorInterface(BaseTemporalAlignmentInterface):
             Whether to overwrite the NWBFile if one exists at the nwbfile_path.
         """
         base_metadata = self.get_metadata()
+        if metadata is None:
+            metadata = {}
         metadata = dict_deep_update(base_metadata, metadata)
 
         with make_or_load_nwbfile(
@@ -79,9 +81,9 @@ class ShulerBehaviorInterface(BaseTemporalAlignmentInterface):
             verbose=self.verbose
         ) as nwbfile_out:
             # Read trials data
-            df_0 = pd.read_csv(self.trials_file_path)
+            df_0 = pd.read_csv(self.source_data["trials_file_path"])
             # Read reference_aligned_timestamps
-            df_reference_aligned_timestamps = pd.read_csv(self.reference_timestamps_file_path, names=["timestamp"])
+            df_reference_aligned_timestamps = pd.read_csv(self.source_data["reference_timestamps_file_path"], names=["timestamp"])
             reference_aligned_timestamps = df_reference_aligned_timestamps["timestamp"].values
             # Get reference_unaligned_timestamps
             df_reference_unaligned_timestamps = df_0.loc[(df_0.key == "camera") & (df_0.value == 1.0)][-len(df_reference_aligned_timestamps):]
