@@ -2,7 +2,7 @@ from neuroconv import NWBConverter
 from neuroconv.datainterfaces import SpikeGLXRecordingInterface
 
 from shuler_lab_to_nwb.behavior_datainterface import ShulerBehaviorInterface
-from shuler_lab_to_nwb.fiberphotometry_datainterface import FiberPhotometryInterface
+# from shuler_lab_to_nwb.fiberphotometry_datainterface import FiberPhotometryInterface
 
 
 class ShulerNWBConverter(NWBConverter):
