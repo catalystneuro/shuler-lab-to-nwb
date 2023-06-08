@@ -7,7 +7,7 @@ from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterf
 from neuroconv.tools.nwb_helpers import make_or_load_nwbfile
 from neuroconv.utils import FilePathType, dict_deep_update
 
-from .tools import add_behavioral_events
+from .tools import add_behavioral_events, add_trials
 
 
 class ShulerBehaviorInterface(BaseTemporalAlignmentInterface):
@@ -95,8 +95,15 @@ class ShulerBehaviorInterface(BaseTemporalAlignmentInterface):
                 unaligned_timestamps=reference_unaligned_timestamps, 
                 aligned_timestamps=reference_aligned_timestamps
             )
+            # Add behavioral events
             nwbfile_out = add_behavioral_events(
                 df=self.df, 
                 nwbfile=nwbfile_out, 
+                metadata=metadata
+            )
+            # Add trials
+            nwbfile_out = add_trials(
+                df=self.df,
+                nwbfile=nwbfile_out,
                 metadata=metadata
             )
