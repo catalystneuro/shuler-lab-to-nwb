@@ -1,0 +1,71 @@
+NWBFile:
+  session_description: Fiber photometry recordings.
+  institution: Johns Hopkins University School of Medicine
+  lab: Shuler Lab
+  experimenter:
+    - Zhang, Shichen
+Subject:
+  species: Mus musculus
+  age: 20W
+  sex: U
+FiberPhotometry:
+  ExcitationSourcesTable:
+    description: The excitation sources table.
+    items:
+      - peak_wavelength: 475.0 # in nanometers
+        source_type: LED # LED or laser
+      - peak_wavelength: 560.0 # in nanometers
+        source_type: LED # LED or laser
+  PhotodetectorsTable:
+    description: The metadata for the photodetector.
+    items:
+      - peak_wavelength: 510.0 # in nanometers
+        type: CMOS camera
+  FluorophoresTable:
+    description: The metadata for the fluorophores. The coordinates are in unit meters relative to Bregma (AP, ML, DV).
+    items:
+      - label: GFP
+        location: Right hemisphere.
+        coordinates:
+          - 0.0008
+          - 0.0015
+          - 0.00233
+      - label: dsRed
+        location: Right hemisphere.
+        coordinates:
+          - 0.0008
+          - 0.0015
+          - 0.00233
+      - label: GFP
+        location: Left hemisphere.
+        coordinates:
+          - 0.0008
+          - -0.0015
+          - 0.00233
+      - label: dsRed
+        location: Left hemisphere.
+        coordinates:
+          - 0.0008
+          - -0.0015
+          - 0.00233
+  FibersTable:
+    description: The metadata for the optical fiber.
+    items:
+      - location: Right hemisphere.
+        notes: The optical fiber was implanted at 0.0008 m (AP), 0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
+        photodetector: 0
+        excitation_source:
+          - 0
+          - 1
+        fluorophores:
+          - 0
+          - 1
+      - location: Left hemisphere.
+        notes: The optical fiber was implanted at 0.0008 m (AP), -0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
+        photodetector: 0
+        excitation_source:
+          - 0
+          - 1
+        fluorophores:
+          - 2
+          - 3
