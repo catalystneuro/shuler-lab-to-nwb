@@ -111,3 +111,5 @@ def add_photometry(
             rois=rois,
         )
         nwbfile.add_acquisition(roi_response_series)
+    
+    return nwbfile

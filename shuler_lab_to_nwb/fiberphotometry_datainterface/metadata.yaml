@@ -1,5 +1,6 @@
 NWBFile:
   session_description: Fiber photometry recordings.
+  session_start_time: "2020-01-01T12:30:00-08:00"
   institution: Johns Hopkins University School of Medicine
   lab: Shuler Lab
   experimenter:

@@ -7,7 +7,7 @@ from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterf
 from neuroconv.tools.nwb_helpers import make_or_load_nwbfile
 from neuroconv.utils import FilePathType, dict_deep_update
 
-from .tools import read_fp_file
+from .tools import read_fp_file, add_photometry
 
 
 class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
@@ -16,6 +16,7 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
     def __init__(
         self,
         photometry_file_path: FilePathType,
+        metadata_file_path: FilePathType,
         verbose: bool = True,
     ):
         """
@@ -25,11 +26,16 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
         ----------
         photometry_file_path : FilePathType
             Path to the file (.csv) containing the photometry time series data.
+        metadata_file_path : FilePathType
+            Path to the file (.yaml) containing the metadata for the photometry data.
         verbose : bool, default: True
             controls verbosity. ``True`` by default.
         """
         self.verbose = verbose
-        super().__init__(photometry_file_path=photometry_file_path)
+        super().__init__(
+            photometry_file_path=photometry_file_path,
+            metadata_file_path=metadata_file_path
+        )
     
     def get_metadata_schema(self) -> dict:
         metadata_schema = super().get_metadata_schema()
@@ -46,21 +52,19 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
         return metadata_schema
     
     def get_metadata(self) -> dict:
-        metadata = super().get_metadata()
-        # session_metadata = load_dict_from_file(self.source_data["metadata_path"])
-        # session_metadata = session_metadata[self.source_data["session_uuid"]]
-        # metadata["NWBFile"]["session_description"] = session_metadata["session_description"]
-        # metadata["NWBFile"]["session_start_time"] = session_metadata["session_start_time"]
-        # metadata["NWBFile"]["identifier"] = self.source_data["session_uuid"]
-        # metadata["NWBFile"]["session_id"] = self.source_data["session_uuid"]
-        # metadata["Subject"]["subject_id"] = session_metadata["subject_id"]
-        # metadata["Subject"]["sex"] = "U"
-        # metadata["FiberPhotometry"]["area"] = session_metadata["area"]
-        # metadata["FiberPhotometry"]["reference_max"] = session_metadata["reference_max"]
-        # metadata["FiberPhotometry"]["signal_max"] = session_metadata["signal_max"]
-        # metadata["FiberPhotometry"]["signal_reference_corr"] = session_metadata["signal_reference_corr"]
-        # metadata["FiberPhotometry"]["snr"] = session_metadata["snr"]
+        base_metadata = super().get_metadata()
+        metadata = load_dict_from_file(self.source_data["metadata_file_path"])
+        metadata = dict_deep_update(base_metadata, metadata)
         return metadata
+    
+    def get_original_timestamps(self) -> np.ndarray:
+        pass
+
+    def get_timestamps(self) -> np.ndarray:
+        pass
+
+    def set_aligned_timestamps(self, aligned_timestamps: np.ndarray):
+        pass
 
     def run_conversion(
         self,
@@ -98,3 +102,10 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
         ) as nwbfile_out:
             # Read fiber photometry data
             self.df_signal, self.df_isosbestic = read_fp_file(file_path=self.source_data["photometry_file_path"])
+            # Add photometry data to nwbfile
+            nwbfile_out = add_photometry(
+                photometry_dataframe=self.df_signal, 
+                isosbestic_dataframe=self.df_isosbestic,
+                nwbfile=nwbfile_out, 
+                metadata=metadata,
+            )
