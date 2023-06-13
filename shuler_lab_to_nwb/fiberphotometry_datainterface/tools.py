@@ -25,6 +25,14 @@ def read_fp_file(self, file_path: str) -> pd.DataFrame:
     df_isosbestic = df[~mask]
     df_signal = df_signal.reset_index(drop=True)
     df_isosbestic = df_isosbestic.reset_index(drop=True)
+
+    # Rename isosbestic columns to include _isosbestic
+    df_isosbestic = df_isosbestic.rename(columns={
+        "GFP_first_branch": "GFP_first_branch_isosbestic", 
+        "RFP_first_branch": "RFP_first_branch_isosbestic", 
+        "GFP_second_branch": "GFP_second_branch_isosbestic", 
+        "RFP_second_branch": "RFP_second_branch_isosbestic"
+    })
     return df_signal, df_isosbestic
 
 
@@ -80,6 +88,7 @@ def add_photometry(
     # Add the metadata tables to the metadata section
     nwbfile.add_lab_meta_data(fiber_photometry)
 
+    # TODO: finish this ###############################################################
     # Create reference for fibers
     rois = DynamicTableRegion(
         name="rois",
@@ -101,3 +110,4 @@ def add_photometry(
         )
 
         nwbfile.add_acquisition(roi_response_series)
+    ###################################################################################

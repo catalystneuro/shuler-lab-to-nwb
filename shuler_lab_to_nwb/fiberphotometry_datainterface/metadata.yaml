@@ -69,3 +69,36 @@ FiberPhotometry:
         fluorophores:
           - 2
           - 3
+  RoiResponseSeries:
+    - name: GFP_first_branch
+      description: GFP recording signal, right hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 0
+    - name: GFP_first_branch_isosbestic
+      description: GFP isosbestic signal, right hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 0
+    - name: RFP_first_branch
+      description: dsRed recording signal, right hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 0
+    - name: RFP_first_branch_isosbestic
+      description: dsRed isosbestic signal, right hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 0
+    - name: GFP_second_branch
+      description: GFP recording signal, left hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 1
+    - name: GFP_second_branch_isosbestic
+      description: GFP isosbestic signal, left hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 1
+    - name: RFP_second_branch
+      description: dsRed recording signal, left hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 1
+    - name: RFP_second_branch_isosbestic
+      description: dsRed isosbestic signal, left hemisphere. The photometry intensity values measured in arbitrary units.
+      unit: a.u.
+      rois: 1
