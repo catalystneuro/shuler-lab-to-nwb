@@ -88,26 +88,26 @@ def add_photometry(
     # Add the metadata tables to the metadata section
     nwbfile.add_lab_meta_data(fiber_photometry)
 
-    # TODO: finish this ###############################################################
-    # Create reference for fibers
-    rois = DynamicTableRegion(
-        name="rois",
-        data=[0],
-        description="source fibers",
-        table=fibers_table,
-    )
     # Create the RoiResponseSeries that holds the intensity values
     for photometry_metadata in metadata["RoiResponseSeries"]:
-        column = photometry_metadata["region"]
-        roi_response_series_name = photometry_metadata["name"]
+        # Create reference for fibers
+        rois = DynamicTableRegion(
+            name="rois",
+            data=[photometry_metadata["rois"]],
+            description="source fibers",
+            table=fibers_table,
+        )
+        column = photometry_metadata["name"]
+        if "_isosbestic" in column:
+            data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
+        else:
+            data = H5DataIO(photometry_dataframe[column].values, compression=True)
         roi_response_series = RoiResponseSeries(
-            name=roi_response_series_name,
+            name=photometry_metadata["name"],
             description=photometry_metadata["description"],
-            data=H5DataIO(photometry_dataframe[column].values, compression=True),
+            data=data,
             unit=photometry_metadata["unit"],
-            timestamps=H5DataIO(photometry_dataframe["Timestamp"].values, compression=True),
+            timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
             rois=rois,
         )
-
         nwbfile.add_acquisition(roi_response_series)
-    ###################################################################################
