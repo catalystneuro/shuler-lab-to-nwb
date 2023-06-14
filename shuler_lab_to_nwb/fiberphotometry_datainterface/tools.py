@@ -7,7 +7,7 @@ from pynwb import NWBFile
 from pynwb.ophys import RoiResponseSeries
 
 
-def read_fp_file(self, file_path: str) -> pd.DataFrame:
+def read_fp_file(file_path: str) -> pd.DataFrame:
     """Reads a fiber photometry file (csv) and returns a pandas DataFrame."""
     df = pd.read_csv(
         file_path,
@@ -43,24 +43,24 @@ def add_photometry(
     metadata: dict,
 ):
     # Create the ExcitationSourcesTable that holds metadata for the LED sources
-    excitation_sources_table = ExcitationSourcesTable(description=metadata["ExcitationSourcesTable"]["description"])
-    for source_metadata in metadata["ExcitationSourcesTable"]["items"]:
+    excitation_sources_table = ExcitationSourcesTable(description=metadata["FiberPhotometry"]["ExcitationSourcesTable"]["description"])
+    for source_metadata in metadata["FiberPhotometry"]["ExcitationSourcesTable"]["items"]:
         excitation_sources_table.add_row(
             peak_wavelength=source_metadata["peak_wavelength"],
             source_type=source_metadata["source_type"],
         )
 
     # Create the PhotodetectorsTable that holds metadata for the photodetector.
-    photodetectors_table = PhotodetectorsTable(description=metadata["PhotodetectorsTable"]["description"])
-    for photodetector_metadata in metadata["PhotodetectorsTable"]["items"]:
+    photodetectors_table = PhotodetectorsTable(description=metadata["FiberPhotometry"]["PhotodetectorsTable"]["description"])
+    for photodetector_metadata in metadata["FiberPhotometry"]["PhotodetectorsTable"]["items"]:
         photodetectors_table.add_row(
-            type=photodetector_metadata["PhotodetectorsTable"]["type"],
-            peak_wavelength=photodetector_metadata["PhotodetectorsTable"]["peak_wavelength"],
+            type=photodetector_metadata["type"],
+            peak_wavelength=photodetector_metadata["peak_wavelength"],
         )
 
     # Create the FluorophoresTable that holds metadata for the fluorophores.
-    fluorophores_table = FluorophoresTable(description=metadata["FluorophoresTable"]["description"])
-    for fluorophore_metadata in metadata["FluorophoresTable"]["items"]:
+    fluorophores_table = FluorophoresTable(description=metadata["FiberPhotometry"]["FluorophoresTable"]["description"])
+    for fluorophore_metadata in metadata["FiberPhotometry"]["FluorophoresTable"]["items"]:
         fluorophores_table.add_row(
             label=fluorophore_metadata["label"],
             location=fluorophore_metadata["location"],
@@ -68,9 +68,21 @@ def add_photometry(
         )
 
     # Create the FibersTable that holds metadata for fibers
-    fibers_table = FibersTable(description=metadata["FibersTable"]["description"])
-    for fiber_metadata in metadata["FibersTable"]["items"]:
-        fibers_table.add_row(
+    fibers_table = FibersTable(description=metadata["FiberPhotometry"]["FibersTable"]["description"])
+
+    # Add the metadata tables to the metadata section of the NWBFile
+    fiber_photometry = FiberPhotometry(
+        fibers=fibers_table,
+        excitation_sources=excitation_sources_table,
+        photodetectors=photodetectors_table,
+        fluorophores=fluorophores_table,
+    )
+    nwbfile.add_lab_meta_data(fiber_photometry)
+
+    # Important: we add the fibers to the fibers table _after_ adding the metadata
+    # This ensures that we can find this data in their tables of origin
+    for fiber_metadata in metadata["FiberPhotometry"]["FibersTable"]["items"]:
+        fibers_table.add_fiber(
             location=fiber_metadata["location"],
             notes=fiber_metadata["notes"],
             excitation_source=fiber_metadata["excitation_source"],
@@ -78,38 +90,28 @@ def add_photometry(
             fluorophores=fiber_metadata["fluorophores"],
         )
 
-    fiber_photometry = FiberPhotometry(
-        fibers=fibers_table,
-        excitation_sources=excitation_sources_table,
-        photodetectors=photodetectors_table,
-        fluorophores=fluorophores_table,
-    )
-
-    # Add the metadata tables to the metadata section
-    nwbfile.add_lab_meta_data(fiber_photometry)
-
-    # Create the RoiResponseSeries that holds the intensity values
-    for photometry_metadata in metadata["RoiResponseSeries"]:
-        # Create reference for fibers
-        rois = DynamicTableRegion(
-            name="rois",
-            data=[photometry_metadata["rois"]],
-            description="source fibers",
-            table=fibers_table,
-        )
-        column = photometry_metadata["name"]
-        if "_isosbestic" in column:
-            data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
-        else:
-            data = H5DataIO(photometry_dataframe[column].values, compression=True)
-        roi_response_series = RoiResponseSeries(
-            name=photometry_metadata["name"],
-            description=photometry_metadata["description"],
-            data=data,
-            unit=photometry_metadata["unit"],
-            timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
-            rois=rois,
-        )
-        nwbfile.add_acquisition(roi_response_series)
+    # # Create the RoiResponseSeries that holds the intensity values
+    # for photometry_metadata in metadata["FiberPhotometry"]["RoiResponseSeries"]:
+    #     # Create reference for fibers
+    #     rois = DynamicTableRegion(
+    #         name="rois",
+    #         data=[photometry_metadata["rois"]],
+    #         description="source fibers",
+    #         table=fibers_table,
+    #     )
+    #     column = photometry_metadata["name"]
+    #     if "_isosbestic" in column:
+    #         data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
+    #     else:
+    #         data = H5DataIO(photometry_dataframe[column].values, compression=True)
+    #     roi_response_series = RoiResponseSeries(
+    #         name=photometry_metadata["name"],
+    #         description=photometry_metadata["description"],
+    #         data=data,
+    #         unit=photometry_metadata["unit"],
+    #         timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
+    #         rois=rois,
+    #     )
+    #     nwbfile.add_acquisition(roi_response_series)
     
     return nwbfile

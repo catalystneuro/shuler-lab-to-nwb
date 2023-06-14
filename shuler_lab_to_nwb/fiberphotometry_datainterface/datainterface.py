@@ -54,8 +54,16 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
     def get_metadata(self) -> dict:
         base_metadata = super().get_metadata()
         metadata = load_dict_from_file(self.source_data["metadata_file_path"])
-        metadata = dict_deep_update(base_metadata, metadata)
+        metadata = dict_deep_update(
+            d=base_metadata, 
+            u=metadata,
+            append_list=False,
+            compare_key="description"
+        )
         return metadata
+    
+    def add_to_nwbfile(self, nwbfile: NWBFile, **conversion_options):
+        pass
     
     def get_original_timestamps(self) -> np.ndarray:
         pass
@@ -93,12 +101,15 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
             metadata = {}
         metadata = dict_deep_update(base_metadata, metadata)
 
+        # return metadata
+
         with make_or_load_nwbfile(
             nwbfile_path=nwbfile_path, 
             nwbfile=nwbfile, 
             metadata=metadata, 
             overwrite=overwrite, 
-            verbose=self.verbose
+            verbose=self.verbose,
+            metadata_update_kwargs={"append_list": False, "compare_key": "description"}
         ) as nwbfile_out:
             # Read fiber photometry data
             self.df_signal, self.df_isosbestic = read_fp_file(file_path=self.source_data["photometry_file_path"])
