@@ -7,7 +7,7 @@ from pynwb import NWBFile
 from pynwb.ophys import RoiResponseSeries
 
 
-def read_fp_file(file_path: str) -> pd.DataFrame:
+def read_fibre_photometry_csv_file(file_path: str) -> pd.DataFrame:
     """Reads a fiber photometry file (csv) and returns a pandas DataFrame."""
     df = pd.read_csv(
         file_path,
