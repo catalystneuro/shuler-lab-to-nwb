@@ -7,7 +7,7 @@ from neuroconv.basetemporalalignmentinterface import BaseTemporalAlignmentInterf
 from neuroconv.tools.nwb_helpers import make_or_load_nwbfile
 from neuroconv.utils import FilePathType, dict_deep_update
 
-from .tools import read_fp_file, add_photometry
+from .tools import read_fibre_photometry_csv_file, add_photometry
 
 
 class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
@@ -109,10 +109,9 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
             metadata=metadata, 
             overwrite=overwrite, 
             verbose=self.verbose,
-            metadata_update_kwargs={"append_list": False, "compare_key": "description"}
         ) as nwbfile_out:
             # Read fiber photometry data
-            self.df_signal, self.df_isosbestic = read_fp_file(file_path=self.source_data["photometry_file_path"])
+            self.df_signal, self.df_isosbestic = read_fibre_photometry_csv_file(file_path=self.source_data["photometry_file_path"])
             # Add photometry data to nwbfile
             nwbfile_out = add_photometry(
                 photometry_dataframe=self.df_signal, 
