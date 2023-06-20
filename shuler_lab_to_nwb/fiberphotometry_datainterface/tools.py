@@ -102,14 +102,16 @@ def add_photometry(
         column = photometry_metadata["name"]
         if "_isosbestic" in column:
             data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
+            timestamps = H5DataIO(isosbestic_dataframe["timestamp"].values, compression=True)
         else:
             data = H5DataIO(photometry_dataframe[column].values, compression=True)
+            timestamps = H5DataIO(photometry_dataframe["timestamp"].values, compression=True)
         roi_response_series = RoiResponseSeries(
             name=photometry_metadata["name"],
             description=photometry_metadata["description"],
             data=data,
             unit=photometry_metadata["unit"],
-            timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
+            timestamps=timestamps,
             rois=rois,
         )
         nwbfile.add_acquisition(roi_response_series)
