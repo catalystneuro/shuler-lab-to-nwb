@@ -85,33 +85,33 @@ def add_photometry(
         fibers_table.add_fiber(
             location=fiber_metadata["location"],
             notes=fiber_metadata["notes"],
-            excitation_source=fiber_metadata["excitation_source"],
+            excitation_sources=fiber_metadata["excitation_sources"],
             photodetector=fiber_metadata["photodetector"],
             fluorophores=fiber_metadata["fluorophores"],
         )
 
-    # # Create the RoiResponseSeries that holds the intensity values
-    # for photometry_metadata in metadata["FiberPhotometry"]["RoiResponseSeries"]:
-    #     # Create reference for fibers
-    #     rois = DynamicTableRegion(
-    #         name="rois",
-    #         data=[photometry_metadata["rois"]],
-    #         description="source fibers",
-    #         table=fibers_table,
-    #     )
-    #     column = photometry_metadata["name"]
-    #     if "_isosbestic" in column:
-    #         data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
-    #     else:
-    #         data = H5DataIO(photometry_dataframe[column].values, compression=True)
-    #     roi_response_series = RoiResponseSeries(
-    #         name=photometry_metadata["name"],
-    #         description=photometry_metadata["description"],
-    #         data=data,
-    #         unit=photometry_metadata["unit"],
-    #         timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
-    #         rois=rois,
-    #     )
-    #     nwbfile.add_acquisition(roi_response_series)
+    # Create the RoiResponseSeries that holds the intensity values
+    for photometry_metadata in metadata["FiberPhotometry"]["RoiResponseSeries"]:
+        # Create reference for fibers
+        rois = DynamicTableRegion(
+            name="rois",
+            data=[photometry_metadata["rois"]],
+            description="source fibers",
+            table=fibers_table,
+        )
+        column = photometry_metadata["name"]
+        if "_isosbestic" in column:
+            data = H5DataIO(isosbestic_dataframe[column].values, compression=True)
+        else:
+            data = H5DataIO(photometry_dataframe[column].values, compression=True)
+        roi_response_series = RoiResponseSeries(
+            name=photometry_metadata["name"],
+            description=photometry_metadata["description"],
+            data=data,
+            unit=photometry_metadata["unit"],
+            timestamps=H5DataIO(photometry_dataframe["timestamp"].values, compression=True),
+            rois=rois,
+        )
+        nwbfile.add_acquisition(roi_response_series)
     
     return nwbfile

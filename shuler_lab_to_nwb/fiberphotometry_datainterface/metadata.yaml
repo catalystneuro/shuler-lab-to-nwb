@@ -6,6 +6,7 @@ NWBFile:
   experimenter:
     - Zhang, Shichen
 Subject:
+  subject_id: "abc123"
   species: Mus musculus
   age: 20W
   sex: U
@@ -55,7 +56,7 @@ FiberPhotometry:
       - location: Right hemisphere.
         notes: The optical fiber was implanted at 0.0008 m (AP), 0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
         photodetector: 0
-        excitation_source:
+        excitation_sources:
           - 0
           - 1
         fluorophores:
@@ -64,7 +65,7 @@ FiberPhotometry:
       - location: Left hemisphere.
         notes: The optical fiber was implanted at 0.0008 m (AP), -0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
         photodetector: 0
-        excitation_source:
+        excitation_sources:
           - 0
           - 1
         fluorophores:
