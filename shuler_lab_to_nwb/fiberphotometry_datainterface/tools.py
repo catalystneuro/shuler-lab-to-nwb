@@ -81,6 +81,7 @@ def add_photometry(
 
     # Important: we add the fibers to the fibers table _after_ adding the metadata
     # This ensures that we can find this data in their tables of origin
+    excitation_sources_index_offset = 1
     for fiber_metadata in metadata["FiberPhotometry"]["FibersTable"]["items"]:
         fibers_table.add_fiber(
             location=fiber_metadata["location"],
@@ -89,6 +90,7 @@ def add_photometry(
             photodetector=fiber_metadata["photodetector"],
             fluorophores=fiber_metadata["fluorophores"],
         )
+        excitation_sources_index_offset += len(fiber_metadata["excitation_sources"])
 
     # Create the RoiResponseSeries that holds the intensity values
     for photometry_metadata in metadata["FiberPhotometry"]["RoiResponseSeries"]:

@@ -1,4 +1,4 @@
 nwbinspector==0.4.28
 spikeinterface[full]==0.97.1
 neuroconv[spikeglx]==0.3.0
-ndx-photometry==0.2.0
+ndx-photometry==0.3.0
