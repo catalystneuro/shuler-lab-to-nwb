@@ -62,9 +62,6 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
         )
         return metadata
     
-    def add_to_nwbfile(self, nwbfile: NWBFile, **conversion_options):
-        pass
-    
     def get_original_timestamps(self) -> np.ndarray:
         pass
 
@@ -74,48 +71,13 @@ class ShulerFiberPhotometryInterface(BaseTemporalAlignmentInterface):
     def set_aligned_timestamps(self, aligned_timestamps: np.ndarray):
         pass
 
-    def run_conversion(
-        self,
-        nwbfile_path: Optional[FilePathType] = None,
-        nwbfile: Optional[NWBFile] = None,
-        metadata: Optional[dict] = None,
-        overwrite: bool = False,
-    ):
-        """
-        Run conversion to nwb.
-
-        Parameters
-        ----------
-        nwbfile_path: FilePathType
-            Path for where to write or load (if overwrite=False) the NWBFile.
-            If specified, this context will always write to this location.
-        nwbfile: NWBFile
-            nwb file to which the recording information is to be added
-        metadata: dict
-            metadata info for constructing the nwb file (optional).
-        overwrite: bool, optional
-            Whether to overwrite the NWBFile if one exists at the nwbfile_path.
-        """
-        base_metadata = self.get_metadata()
-        if metadata is None:
-            metadata = {}
-        metadata = dict_deep_update(base_metadata, metadata)
-
-        # return metadata
-
-        with make_or_load_nwbfile(
-            nwbfile_path=nwbfile_path, 
+    def add_to_nwbfile(self, nwbfile: NWBFile, metadata: dict, **conversion_options):
+        # Read fiber photometry data
+        self.df_signal, self.df_isosbestic = read_fibre_photometry_csv_file(file_path=self.source_data["photometry_file_path"])
+        # Add photometry data to nwbfile
+        nwbfile = add_photometry(
+            photometry_dataframe=self.df_signal, 
+            isosbestic_dataframe=self.df_isosbestic,
             nwbfile=nwbfile, 
-            metadata=metadata, 
-            overwrite=overwrite, 
-            verbose=self.verbose,
-        ) as nwbfile_out:
-            # Read fiber photometry data
-            self.df_signal, self.df_isosbestic = read_fibre_photometry_csv_file(file_path=self.source_data["photometry_file_path"])
-            # Add photometry data to nwbfile
-            nwbfile_out = add_photometry(
-                photometry_dataframe=self.df_signal, 
-                isosbestic_dataframe=self.df_isosbestic,
-                nwbfile=nwbfile_out, 
-                metadata=metadata,
-            )
+            metadata=metadata,
+        )
