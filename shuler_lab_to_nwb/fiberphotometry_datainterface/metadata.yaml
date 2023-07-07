@@ -14,10 +14,12 @@ FiberPhotometry:
   ExcitationSourcesTable:
     description: The excitation sources table.
     items:
-      - peak_wavelength: 475.0 # in nanometers
+      - peak_wavelength: 470.0 # in nanometers
         source_type: LED # LED or laser
-      - peak_wavelength: 560.0 # in nanometers
-        source_type: LED # LED or laser
+      - peak_wavelength: 560.0
+        source_type: LED
+      - peak_wavelength: 410.0
+        source_type: LED
   PhotodetectorsTable:
     description: The metadata for the photodetector.
     items:
@@ -59,6 +61,7 @@ FiberPhotometry:
         excitation_sources:
           - 0
           - 1
+          - 2
         fluorophores:
           - 0
           - 1
@@ -68,39 +71,56 @@ FiberPhotometry:
         excitation_sources:
           - 0
           - 1
+          - 2
         fluorophores:
           - 2
           - 3
-  RoiResponseSeries:
+  FiberPhotometryResponseSeries:
     - name: GFP_first_branch
       description: GFP recording signal, right hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 0
+      fiber: 0
+      excitation_source: 0
+      fluorophore: 0
     - name: GFP_first_branch_isosbestic
       description: GFP isosbestic signal, right hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 0
+      fiber: 0
+      excitation_source: 2
+      fluorophore: 0
     - name: RFP_first_branch
       description: dsRed recording signal, right hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 0
+      fiber: 0
+      excitation_source: 1
+      fluorophore: 1
     - name: RFP_first_branch_isosbestic
       description: dsRed isosbestic signal, right hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 0
+      fiber: 0
+      excitation_source: 2
+      fluorophore: 1
     - name: GFP_second_branch
       description: GFP recording signal, left hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 1
+      fiber: 1
+      excitation_source: 0
+      fluorophore: 0
     - name: GFP_second_branch_isosbestic
       description: GFP isosbestic signal, left hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 1
+      fiber: 1
+      excitation_source: 2
+      fluorophore: 0
     - name: RFP_second_branch
       description: dsRed recording signal, left hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 1
+      fiber: 1
+      excitation_source: 1
+      fluorophore: 1
     - name: RFP_second_branch_isosbestic
       description: dsRed isosbestic signal, left hemisphere. The photometry intensity values measured in arbitrary units.
       unit: a.u.
-      rois: 1
+      fiber: 1
+      excitation_source: 2
+      fluorophore: 1

@@ -1,10 +1,16 @@
-from typing import Optional
 import pandas as pd
+from pynwb import NWBFile
 from hdmf.backends.hdf5 import H5DataIO
 from hdmf.common import DynamicTableRegion
-from ndx_photometry import FibersTable, FiberPhotometry, ExcitationSourcesTable, PhotodetectorsTable, FluorophoresTable
-from pynwb import NWBFile
-from pynwb.ophys import RoiResponseSeries
+from ndx_photometry import (
+    FibersTable, 
+    FiberPhotometry, 
+    ExcitationSourcesTable, 
+    PhotodetectorsTable, 
+    FluorophoresTable,
+    FiberPhotometryResponseSeries,
+)
+
 
 
 def read_fibre_photometry_csv_file(file_path: str) -> pd.DataFrame:
@@ -81,7 +87,6 @@ def add_photometry(
 
     # Important: we add the fibers to the fibers table _after_ adding the metadata
     # This ensures that we can find this data in their tables of origin
-    excitation_sources_index_offset = 1
     for fiber_metadata in metadata["FiberPhotometry"]["FibersTable"]["items"]:
         fibers_table.add_fiber(
             location=fiber_metadata["location"],
@@ -90,16 +95,26 @@ def add_photometry(
             photodetector=fiber_metadata["photodetector"],
             fluorophores=fiber_metadata["fluorophores"],
         )
-        excitation_sources_index_offset += len(fiber_metadata["excitation_sources"])
 
-    # Create the RoiResponseSeries that holds the intensity values
-    for photometry_metadata in metadata["FiberPhotometry"]["RoiResponseSeries"]:
-        # Create reference for fibers
-        rois = DynamicTableRegion(
-            name="rois",
-            data=[photometry_metadata["rois"]],
-            description="source fibers",
+    # Create the FiberPhotometryResponseSeries that holds the intensity values
+    for photometry_metadata in metadata["FiberPhotometry"]["FiberPhotometryResponseSeries"]:
+        fiber_dtr = DynamicTableRegion(
+            name="fiber",
+            description="Source fiber.",
+            data=[photometry_metadata["fiber"]],
             table=fibers_table,
+        )
+        excitation_source_dtr = DynamicTableRegion(
+            name="excitation_source",
+            description="Excitation source.",
+            data=[photometry_metadata["excitation_source"]],
+            table=excitation_sources_table,
+        )
+        fluorophore_dtr = DynamicTableRegion(
+            name="fluorophore",
+            description="Fluorophore.",
+            data=[photometry_metadata["fluorophore"]],
+            table=fluorophores_table,
         )
         column = photometry_metadata["name"]
         if "_isosbestic" in column:
@@ -108,14 +123,16 @@ def add_photometry(
         else:
             data = H5DataIO(photometry_dataframe[column].values, compression=True)
             timestamps = H5DataIO(photometry_dataframe["timestamp"].values, compression=True)
-        roi_response_series = RoiResponseSeries(
+        response_series = FiberPhotometryResponseSeries(
             name=photometry_metadata["name"],
             description=photometry_metadata["description"],
             data=data,
             unit=photometry_metadata["unit"],
             timestamps=timestamps,
-            rois=rois,
+            fiber=fiber_dtr,
+            excitation_source=excitation_source_dtr,
+            fluorophore=fluorophore_dtr,
         )
-        nwbfile.add_acquisition(roi_response_series)
+        nwbfile.add_acquisition(response_series)
     
     return nwbfile
