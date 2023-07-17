@@ -58,23 +58,9 @@ FiberPhotometry:
       - location: Right hemisphere.
         notes: The optical fiber was implanted at 0.0008 m (AP), 0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
         photodetector: 0
-        excitation_sources:
-          - 0
-          - 1
-          - 2
-        fluorophores:
-          - 0
-          - 1
       - location: Left hemisphere.
         notes: The optical fiber was implanted at 0.0008 m (AP), -0.0015 m (ML), and 0.00233 m (DV) relative to Bregma.
         photodetector: 0
-        excitation_sources:
-          - 0
-          - 1
-          - 2
-        fluorophores:
-          - 2
-          - 3
   FiberPhotometryResponseSeries:
     - name: GFP_first_branch
       description: GFP recording signal, right hemisphere. The photometry intensity values measured in arbitrary units.

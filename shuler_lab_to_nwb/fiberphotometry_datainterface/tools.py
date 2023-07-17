@@ -91,9 +91,7 @@ def add_photometry(
         fibers_table.add_fiber(
             location=fiber_metadata["location"],
             notes=fiber_metadata["notes"],
-            excitation_sources=fiber_metadata["excitation_sources"],
             photodetector=fiber_metadata["photodetector"],
-            fluorophores=fiber_metadata["fluorophores"],
         )
 
     # Create the FiberPhotometryResponseSeries that holds the intensity values
